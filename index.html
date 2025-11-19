@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Domina el CRUD en Laravel | Tutorial Interactivo</title>
+    
+    <!-- Google Fonts: Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Prism.js para resaltado de sintaxis de código -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    
+    <!-- Nuestros estilos -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <header>
+        <div class="container">
+            <h1>Domina el CRUD en Laravel</h1>
+            <p class="subtitle">La guía definitiva para entender y aplicar Crear, Leer, Actualizar y Eliminar.</p>
+        </div>
+    </header>
+
+    <main class="presentation-shell">
+        <div class="container">
+            <section class="h5p-wrapper">
+                <aside class="h5p-sidebar">
+                    <p class="sidebar-title">Ruta interactiva CRUD</p>
+                    <ol class="timeline" id="timeline-nav">
+                        <li><button class="timeline-step active" data-slide-target="0"><span>01</span>Introducción</button></li>
+                        <li><button class="timeline-step" data-slide-target="1"><span>02</span>Crear</button></li>
+                        <li><button class="timeline-step" data-slide-target="2"><span>03</span>Leer</button></li>
+                        <li><button class="timeline-step" data-slide-target="3"><span>04</span>Actualizar</button></li>
+                        <li><button class="timeline-step" data-slide-target="4"><span>05</span>Eliminar</button></li>
+                        <li><button class="timeline-step" data-slide-target="5"><span>06</span>Laboratorio</button></li>
+                        <li><button class="timeline-step" data-slide-target="6"><span>07</span>Videos</button></li>
+                        <li><button class="timeline-step" data-slide-target="7"><span>08</span>Quiz</button></li>
+                    </ol>
+                    <div class="sidebar-progress">
+                        <span id="progress-label">Paso 1 de 8</span>
+                        <div class="progress-bar">
+                            <span id="slide-progress-fill"></span>
+                        </div>
+                        <p class="sidebar-hint">Usa las flechas del teclado o los botones para avanzar como en una presentación H5P.</p>
+                    </div>
+                </aside>
+
+                <div class="slide-area">
+                    <section id="intro" class="slide active" data-slide="0">
+                        <div class="slide-header">
+                            <p class="badge">Panorama</p>
+                            <h2>¿Qué es el CRUD?</h2>
+                            <p>CRUD es el acrónimo de las cuatro operaciones fundamentales en la gestión de datos persistentes. Son la base de casi toda aplicación web, y en Laravel se expresan mediante rutas, controladores, modelos y vistas.</p>
+                        </div>
+                        <div class="slide-body intro-grid">
+                            <div>
+                                <h3>Explora cada pilar</h3>
+                                <p>Toca una tarjeta para saltar directamente al paso correspondiente:</p>
+                                <div class="crud-grid">
+                                    <button class="crud-item" data-go-slide="1">
+                                        <strong>C</strong>rear
+                                        <span>Formularios, validación y almacenamiento.</span>
+                                    </button>
+                                    <button class="crud-item" data-go-slide="2">
+                                        <strong>L</strong>eer
+                                        <span>Listados filtrados y vistas detalle.</span>
+                                    </button>
+                                    <button class="crud-item" data-go-slide="3">
+                                        <strong>A</strong>ctualizar
+                                        <span>Edición segura y auditorías.</span>
+                                    </button>
+                                    <button class="crud-item" data-go-slide="4">
+                                        <strong>E</strong>liminar
+                                        <span>Confirmaciones, políticas y SoftDeletes.</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="intro-media">
+                                <video id="video-introduccion" controls width="100%" style="display: block;">
+                                    <source src="Video/Introducción CRUD en Laravel.webm" type="video/webm">
+                                    Tu navegador no soporta el elemento de video.
+                                </video>
+                                <p class="caption">📹 Video introductorio recomendado para arrancar con la ruta CRUD.</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="crear" class="slide" data-slide="1">
+                        <div class="slide-header">
+                            <p class="badge">Paso 1</p>
+                            <h2>Crear (Create)</h2>
+                            <p>Mostramos un formulario, validamos la petición y persistimos los datos. Aquí comienza el viaje del recurso.</p>
+                        </div>
+                        <div class="slide-body two-columns">
+                            <div>
+                                <div class="code-blocks">
+                                    <div class="code-block">
+                                        <h4>Ruta (routes/web.php)</h4>
+                                        <pre><code class="language-php">// Mostrar el formulario de creación
+Route::get('/usuarios/create', [UserController::class, 'create']);
+
+// Procesar el envío del formulario
+Route::post('/usuarios', [UserController::class, 'store']);</code></pre>
+                                    </div>
+                                    <div class="code-block">
+                                        <h4>Controlador (app/Http/Controllers/UserController.php)</h4>
+                                        <pre><code class="language-php">public function create() {
+    return view('users.create');
+}
+
+public function store(Request $request) {
+    $validated = $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|email|unique:users',
+    ]);
+
+    User::create($validated);
+    return redirect()->route('users.index');
+}</code></pre>
+                                    </div>
+                                </div>
+                                <div class="interactive-callout">
+                                    <p>¿Qué deberías revisar antes de almacenar?</p>
+                                    <button class="reveal-btn" data-reveal="store-checklist">Mostrar checklist</button>
+                                    <div class="reveal-panel" id="reveal-store-checklist">
+                                        <ul>
+                                            <li>Valida la data con Form Requests reutilizables.</li>
+                                            <li>Protege tus modelos con <code>$fillable</code> o <code>$guarded</code>.</li>
+                                            <li>Registra eventos posteriores (notificaciones, auditoría).</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="slide-media">
+                                <h4>Micro reto</h4>
+                                <p>¿Qué middleware agregarías si solo usuarios verificados pueden crear?</p>
+                                <div class="micro-poll">
+                                    <button class="poll-option" data-feedback="¡Exacto! 'auth' + 'verified' garantizan acceso autenticado y verificado.">auth + verified</button>
+                                    <button class="poll-option" data-feedback="Recuerda que 'guest' impide acceso a autenticados; no serviría aquí.">guest</button>
+                                    <button class="poll-option" data-feedback="Solo 'throttle' controla la frecuencia, pero no la autenticación.">throttle</button>
+                                </div>
+                                <div class="poll-feedback" id="poll-feedback"></div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="leer" class="slide" data-slide="2">
+                        <div class="slide-header">
+                            <p class="badge">Paso 2</p>
+                            <h2>Leer (Read)</h2>
+                            <p>Puedes listar cientos de registros o enfocarte en uno. Laravel te da herramientas como paginación, scopes y Route Model Binding.</p>
+                        </div>
+                        <div class="slide-body two-columns">
+                            <div class="code-blocks">
+                                <div class="code-block">
+                                    <h4>Controlador - Listar (index)</h4>
+                                    <pre><code class="language-php">public function index() {
+    $users = User::latest()->paginate(10);
+    return view('users.index', compact('users'));
+}</code></pre>
+                                </div>
+                                <div class="code-block">
+                                    <h4>Controlador - Detalle (show)</h4>
+                                    <pre><code class="language-php">public function show(User $user) {
+    // Route Model Binding inyecta el usuario automáticamente
+    return view('users.show', compact('user'));
+}</code></pre>
+                                </div>
+                            </div>
+                            <div class="slide-media">
+                                <h4>Tips de lectura eficiente</h4>
+                                <ul class="tip-list">
+                                    <li>Aplica filtros condicionales con <code>when()</code> y scopes.</li>
+                                    <li>Convierte tus resultados en Resources para APIs limpias.</li>
+                                    <li>Prefetch relaciones con <code>with()</code> para evitar N+1.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="actualizar" class="slide" data-slide="3">
+                        <div class="slide-header">
+                            <p class="badge">Paso 3</p>
+                            <h2>Actualizar (Update)</h2>
+                            <p>Un formulario de edición precarga los datos actuales y, al enviarlo, aplicamos nuevas validaciones antes de guardar.</p>
+                        </div>
+                        <div class="slide-body two-columns">
+                            <div class="code-blocks">
+                                <div class="code-block">
+                                    <h4>Rutas (routes/web.php)</h4>
+                                    <pre><code class="language-php">Route::get('/usuarios/{user}/edit', [UserController::class, 'edit']);
+Route::put('/usuarios/{user}', [UserController::class, 'update']);</code></pre>
+                                </div>
+                                <div class="code-block">
+                                    <h4>Controlador (app/Http/Controllers/UserController.php)</h4>
+                                    <pre><code class="language-php">public function update(Request $request, User $user) {
+    $validated = $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|email|unique:users,email,' . $user->id,
+    ]);
+
+    $user->update($validated);
+    return redirect()->route('users.index');
+}</code></pre>
+                                </div>
+                            </div>
+                            <div class="slide-media">
+                                <div class="interactive-callout">
+                                    <p>¿Necesitas compartir formularios Create/Edit?</p>
+                                    <button class="reveal-btn" data-reveal="reuse-forms">Ver recomendación</button>
+                                    <div class="reveal-panel" id="reveal-reuse-forms">
+                                        <p>Extrae los campos a un componente Blade o Livewire y usa el mismo include para <code>create</code> y <code>edit</code>. Así mantienes consistencia.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="eliminar" class="slide" data-slide="4">
+                        <div class="slide-header">
+                            <p class="badge">Paso 4</p>
+                            <h2>Eliminar (Delete)</h2>
+                            <p>Las eliminaciones deben ser conscientes: confirma, autoriza y considera SoftDeletes para recuperar registros.</p>
+                        </div>
+                        <div class="slide-body two-columns">
+                            <div class="code-blocks">
+                                <div class="code-block">
+                                    <h4>Ruta (routes/web.php)</h4>
+                                    <pre><code class="language-php">Route::delete('/usuarios/{user}', [UserController::class, 'destroy']);</code></pre>
+                                </div>
+                                <div class="code-block">
+                                    <h4>Controlador (app/Http/Controllers/UserController.php)</h4>
+                                    <pre><code class="language-php">public function destroy(User $user) {
+    $user->delete();
+    return redirect()->route('users.index');
+}</code></pre>
+                                </div>
+                            </div>
+                            <div class="slide-media">
+                                <div class="interactive-callout">
+                                    <p>Buenas prácticas</p>
+                                    <ul class="tip-list">
+                                        <li>Confirma con modal o alerta antes de borrar.</li>
+                                        <li>Autoriza con Policies o Gates.</li>
+                                        <li>SoftDeletes + trabajos nocturnos para purgar definitivamente.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="lab" class="slide" data-slide="5">
+                        <div class="slide-header">
+                            <p class="badge">Laboratorio</p>
+                            <h2>Escenarios interactivos</h2>
+                            <p>Elige un reto CRUD y recibe rutas, controladores y consejos como en una experiencia H5P.</p>
+                        </div>
+                        <div class="slide-body">
+                            <div class="lab-grid">
+                                <div class="lab-controls">
+                                    <label for="scenario-select">Escoge un escenario:</label>
+                                    <select id="scenario-select"></select>
+                                    <div class="lab-toggles">
+                                        <label>
+                                            <input type="checkbox" id="lab-debug-toggle">
+                                            Mostrar consejos avanzados
+                                        </label>
+                                    </div>
+                                    <button class="btn-outline" id="lab-random">Sorpréndeme</button>
+                                </div>
+                                <div class="lab-output">
+                                    <h3 id="lab-title">API de usuarios autenticados</h3>
+                                    <p id="lab-description">Analiza cómo proteger las rutas y qué middleware usar para garantizar que solo usuarios verificados puedan realizar cambios.</p>
+                                    <div class="lab-tags" id="lab-tags"></div>
+                                    <pre><code class="language-php" id="lab-code">Route::middleware('auth')->group(function () {
+    Route::post('/usuarios', [UserController::class, 'store']);
+});</code></pre>
+                                    <div class="lab-tip" id="lab-tip">Consejo: combina políticas de autorización para validar permisos específicos.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="videos" class="slide" data-slide="6">
+                        <div class="slide-header">
+                            <p class="badge">Refuerza</p>
+                            <h2>Videos recomendados</h2>
+                            <p>Completa la presentación con cápsulas audiovisuales centradas en CRUD y buenas prácticas.</p>
+                        </div>
+                        <div class="slide-body">
+                            <div class="video-grid">
+                                <article class="video-card">
+                                    <div class="video-wrapper">
+                                        <video id="video-crud-completo" controls width="100%" style="display: block;">
+                                            <source src="Video/CRUD completo en Laravel.webm" type="video/webm">
+                                            Tu navegador no soporta el elemento de video.
+                                        </video>
+                                    </div>
+                                    <h4>📹 CRUD completo en Laravel</h4>
+                                    <p>Tutorial completo en español: crea, lee, actualiza y elimina registros paso a paso.</p>
+                                </article>
+                                <article class="video-card">
+                                    <div class="video-wrapper">
+                                        <video id="video-validacion" controls width="100%" style="display: block;">
+                                            <source src="Video/Validación de formularios.webm" type="video/webm">
+                                            Tu navegador no soporta el elemento de video.
+                                        </video>
+                                    </div>
+                                    <h4>📹 Validación de formularios</h4>
+                                    <p>Aprende a validar datos en Laravel con Form Requests y reglas personalizadas.</p>
+                                </article>
+                                <article class="video-card">
+                                    <div class="video-wrapper">
+                                        <video id="video-api-rest" controls width="100%" style="display: block;">
+                                            <source src="Video/API REST con Laravel.webm" type="video/webm">
+                                            Tu navegador no soporta el elemento de video.
+                                        </video>
+                                    </div>
+                                    <h4>📹 API REST con Laravel</h4>
+                                    <p>Construye una API REST completa con operaciones CRUD usando Laravel.</p>
+                                </article>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="quiz" class="slide" data-slide="7">
+                        <div class="slide-header">
+                            <p class="badge">Validación</p>
+                            <h2>¡Pon a prueba tus conocimientos!</h2>
+                            <p>Responde a estas preguntas sobre el ciclo CRUD en Laravel.</p>
+                        </div>
+                        <div class="slide-body">
+                            <div id="quiz-container">
+                                <div class="quiz-progress">
+                                    <span id="quiz-step">Pregunta 1 de 5</span>
+                                    <div class="progress-bar quiz-progress-bar">
+                                        <span id="quiz-progress-fill"></span>
+                                    </div>
+                                </div>
+                                <div id="quiz-card">
+                                    <p id="quiz-question"></p>
+                                    <div id="quiz-options"></div>
+                                </div>
+                                <div class="quiz-controls">
+                                    <button id="next-question" class="btn-primary" disabled>Siguiente</button>
+                                </div>
+                                <div id="quiz-results" style="display: none;">
+                                    <h3>Tu Resultado:</h3>
+                                    <p id="score-display"></p>
+                                    <div id="feedback"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <div class="slide-controls">
+                        <button id="prev-slide" class="circle-btn" aria-label="Anterior">◀</button>
+                        <span class="controls-hint">Usa ← → o la barra lateral</span>
+                        <button id="next-slide" class="circle-btn primary" aria-label="Siguiente">▶</button>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        <p>Creado con ❤️ para la comunidad de Laravel. ¡Sigue aprendiendo!</p>
+    </footer>
+
+    <!-- Scripts al final del body para mejor rendimiento -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <script src="js/video-config.js"></script>
+    <script src="js/script.js"></script>
+
+</body>
+</html>
